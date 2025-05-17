@@ -9,9 +9,9 @@ public class CubePool : MonoBehaviour
 
     private Stack<Cube> _pool;
 
-    public event Action<Cube> Getting;
+    public event Action<Cube> Getted;
 
-    public event Action<Cube> Releasing;
+    public event Action<Cube> Released;
 
     private void Awake()
     {
@@ -29,7 +29,7 @@ public class CubePool : MonoBehaviour
         Cube cube = _pool.Count == 0 ? _factory.Create() : _pool.Pop();
         cube.transform.SetPositionAndRotation(position, rotation);
         cube.gameObject.SetActive(true);
-        Getting?.Invoke(cube);
+        Getted?.Invoke(cube);
 
         return cube;
     }
@@ -39,6 +39,6 @@ public class CubePool : MonoBehaviour
         cube.gameObject.SetActive(false);
         cube.Reset();
         _pool.Push(cube);
-        Releasing?.Invoke(cube);
+        Released?.Invoke(cube);
     }
 }

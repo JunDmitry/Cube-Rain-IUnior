@@ -7,10 +7,7 @@ public class ColorChanger : MonoBehaviour
 
     public void Change(Cube cube)
     {
-        if (cube.gameObject.TryGetComponent(out Renderer renderer))
-            StartCoroutine(ChangeColorSmoothly(renderer.material, Random.ColorHSV()));
-        else
-            Debug.LogWarning("Cannot change color Gameobject without Renderer component!");
+        StartCoroutine(ChangeColorSmoothly(cube.Renderer.material, Random.ColorHSV()));
     }
 
     private IEnumerator ChangeColorSmoothly(Material material, Color color)

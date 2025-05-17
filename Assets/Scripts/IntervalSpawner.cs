@@ -13,18 +13,20 @@ public class IntervalSpawner : MonoBehaviour
     [SerializeField] private ColorChanger _colorChanger;
     [SerializeField] private CubePool _cubePool;
 
+    private Coroutine _coroutine;
+
     private void OnEnable()
     {
-        _cubePool.Getting += OnGetting;
-        _cubePool.Releasing += OnReleasing;
-        InvokeRepeating(nameof(Spawn), _interval, _interval);
+        _cubePool.Getted += OnGetted;
+        _cubePool.Released += OnReleased;
+        _coroutine = StartCoroutine(Spawn());
     }
 
     private void OnDisable()
     {
-        _cubePool.Getting -= OnGetting;
-        _cubePool.Releasing -= OnReleasing;
-        CancelInvoke(nameof(Spawn));
+        _cubePool.Getted -= OnGetted;
+        _cubePool.Released -= OnReleased;
+        StopCoroutine(_coroutine);
     }
 
     private void OnValidate()
@@ -33,17 +35,23 @@ public class IntervalSpawner : MonoBehaviour
             _maxLifetime = _minLifetime;
     }
 
-    private void Spawn()
+    private IEnumerator Spawn()
     {
-        _cubePool.GetCube(_positionRandomizer.GetPosition(), Random.rotation);
+        WaitForSeconds waitSeconds = new(_interval);
+
+        while (enabled)
+        {
+            yield return waitSeconds;
+            _cubePool.GetCube(_positionRandomizer.GetPosition(), Random.rotation);
+        }
     }
 
-    private void OnGetting(Cube cube)
+    private void OnGetted(Cube cube)
     {
         cube.FirstCollidedWithPlatform += CollidedWithPlatform;
     }
 
-    private void OnReleasing(Cube cube)
+    private void OnReleased(Cube cube)
     {
         cube.FirstCollidedWithPlatform -= CollidedWithPlatform;
     }

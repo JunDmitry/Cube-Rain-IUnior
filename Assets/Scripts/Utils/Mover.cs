@@ -1,3 +1,4 @@
+using Assets.Scripts.Utils;
 using UnityEngine;
 
 public class Mover : MonoBehaviour
@@ -7,24 +8,16 @@ public class Mover : MonoBehaviour
     private const float Precision = 1e-9f;
 
     [SerializeField] private float _speed;
-
-    private float _horizontalDirection;
-    private float _verticalDirection;
+    [SerializeField] private InputReader _reader;
 
     private void FixedUpdate()
     {
-        if (Mathf.Abs(_horizontalDirection) <= Precision && Mathf.Abs(_verticalDirection) <= Precision)
-            return;
-
-        Vector3 direction = new(_horizontalDirection, 0f, _verticalDirection);
+        Vector3 direction = new(_reader.HorizontalDirection, 0f, _reader.VerticalDirection);
         direction.Normalize();
 
-        transform.Translate(_speed * Time.deltaTime * direction);
-    }
+        if (Mathf.Abs(direction.x) <= Precision && Mathf.Abs(direction.z) <= Precision)
+            return;
 
-    private void Update()
-    {
-        _horizontalDirection = Input.GetAxis(Horizontal);
-        _verticalDirection = Input.GetAxis(Vertical);
+        transform.Translate(_speed * Time.deltaTime * direction);
     }
 }

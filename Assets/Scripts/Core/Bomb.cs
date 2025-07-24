@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts
 {
-    [RequireComponent(typeof(Renderer))]
+    [RequireComponent(typeof(Renderer), typeof(Rigidbody))]
     public class Bomb : MonoBehaviour
     {
         [SerializeField, Min(0)] private float _explodeForce;
@@ -10,7 +10,7 @@ namespace Assets.Scripts
 
         private Renderer _renderer;
         private Color _initialColor;
-
+        private Rigidbody _attachedRigidbody;
         private Exploder _exploder;
 
         public Renderer Renderer => _renderer;
@@ -19,6 +19,7 @@ namespace Assets.Scripts
         {
             _renderer = GetComponent<Renderer>();
             _initialColor = _renderer.material.color;
+            _attachedRigidbody = GetComponent<Rigidbody>();
         }
 
         private void OnDrawGizmosSelected()
@@ -30,6 +31,9 @@ namespace Assets.Scripts
         public void Reset()
         {
             _renderer.material.color = _initialColor;
+            transform.rotation = Quaternion.identity;
+            _attachedRigidbody.velocity = Vector3.zero;
+            _attachedRigidbody.angularVelocity = Vector3.zero;
         }
 
         public void Initialize(Exploder exploder)
@@ -39,7 +43,7 @@ namespace Assets.Scripts
 
         public void Explode()
         {
-            _exploder.Explode(transform.position, _explodeForce, _explodeRadius);
+            _exploder?.Explode(transform.position, _explodeForce, _explodeRadius);
         }
     }
 }

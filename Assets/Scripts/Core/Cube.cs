@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(Renderer), typeof(Rigidbody))]
 public class Cube : MonoBehaviour
 {
     private bool _isCollidedWithPlatform;
     private Renderer _renderer;
     private Color _initialColor;
+    private Rigidbody _attachedRigidbody;
 
     public event Action<Cube> FirstCollidedWithPlatform;
 
@@ -17,6 +18,7 @@ public class Cube : MonoBehaviour
     {
         _renderer = GetComponent<Renderer>();
         _initialColor = _renderer.material.color;
+        _attachedRigidbody = GetComponent<Rigidbody>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -32,5 +34,8 @@ public class Cube : MonoBehaviour
     {
         _isCollidedWithPlatform = false;
         _renderer.material.color = _initialColor;
+        transform.rotation = Quaternion.identity;
+        _attachedRigidbody.velocity = Vector3.zero;
+        _attachedRigidbody.angularVelocity = Vector3.zero;
     }
 }
